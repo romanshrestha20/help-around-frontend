@@ -1,10 +1,11 @@
-import apiClient from "@/src/shared/api/client";
-import {
+import apiClient from "@/src/shared/api/client.js";
+import type {
+    User,
     AuthResponse,
     ChangePasswordPayload,
     LoginPayload,
     RegisterPayload,
-} from "@/src/features/auth/auth.types";
+} from "../auth.types.js";
 
 
 /**
@@ -73,10 +74,9 @@ export const changePassword = async (data: ChangePasswordPayload): Promise<{}> =
 
 /**
  * Calls the backend get current user endpoint
-
  */
 
-export const getCurrentUser = async (): Promise<{User}> => {
+export const getCurrentUser = async (): Promise<{ user: User }> => {
     try {
         const response = await apiClient.get<{user: User}>('/auth/me');
         return response.data;   

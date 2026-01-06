@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useEffect,
   useState,
@@ -6,22 +6,22 @@ import {
   useCallback,
 } from "react";
 
-import { saveAuth, getToken, getUser, clearAuth } from "../auth/auth.storage";
+import { saveAuth, getToken, clearAuth } from "../auth/auth.storage.js";
 import {
   login as loginApi,
   register as registerApi,
   logout as logoutApi,
   changePassword as changePasswordApi,
-  getUser as getUserApi,
-} from "./api/auth.api";
+  getCurrentUser,
+} from "./api/auth.api.js";
 import {
   ChangePasswordPayload,
   LoginPayload,
   RegisterPayload,
   User,
-} from "@/src/features/auth/auth.types";
+} from "./auth.types.js";
 
-import { useRouter } from "expo-router";
+// Navigation is handled by consumers via callbacks
 
 // Optional callback interfaces
 export interface AuthActionOptions {
@@ -33,6 +33,7 @@ export interface AuthActionOptions {
 // Define the shape of the context
 export interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -51,6 +52,7 @@ export interface AuthContextType {
 // Create the context with default empty functions
 export const AuthContext = createContext<AuthContextType>({
   user: null,
+  setUser: () => {},
   loading: true,
   error: null,
   isAuthenticated: false,
@@ -66,9 +68,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
 
-  const router = useRouter();
   /**
    * Restore session on app start
+   * data: {}
+   * @returns void
    */
   useEffect(() => {
     const restoreSession = async () => {
@@ -78,17 +81,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const token = await getToken(); // Get JWT from SecureStore
         if (!token) return; // No token, no session
-        const frestoredUser = await getCurrentUser(); // Get user from SecureStore
-        if (token && frestoredUser) {
-          setUser(frestoredUser.user); // Restore session
+        const storedUser = await getCurrentUser(); // Get user from SecureStore
+        if (token && storedUser) {
+          setUser(storedUser.user); // Restore session
         }
-        await saveAuth(token, frestoredUser.user); // Refresh storage
+        await saveAuth(token, storedUser.user); // Refresh storage
       } catch (err) {
         console.error("Failed to restore session:", err);
         setError("Failed to restore session. Try again later"); // If storage fails
         await clearAuth(); // Clear storage
         setUser(null); // Clear user
-        router.replace("/(auth)/login"); // Navigate to login
+        // Consumers may redirect on failure via UI handlers
       } finally {
         setLoading(false); // Done restoring
       }
@@ -100,6 +103,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   /**
    * Login user
+   * data: { email, password }
+   * @params options - Callbacks for success, failure, and redirection
+   * @returns void
    */
   const signIn = useCallback(
     async (payload: LoginPayload, options?: AuthActionOptions) => {
@@ -133,6 +139,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   /**
    * Register user
+   * @params payload - Registration data
+   * data: { firstName, lastName, email, password }
+   * @params options - Callbacks for success, failure, and redirection
+   * @returns void
    */
   const signUp = useCallback(
     async (payload: RegisterPayload, options?: AuthActionOptions) => {
@@ -161,8 +171,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   /**
    * Logout user
+   * data: {}
+   * @params options - Callbacks for success, failure, and redirection
+   * @returns void
    */
-  const signOut = useCallback(async () => {
+  const signOut = useCallback(async (options?: AuthActionOptions) => {
     setLoading(true);
 
     try {
@@ -173,12 +186,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await clearAuth(); // Clear SecureStore
       setUser(null); // Clear context user
       setLoading(false);
-      router.replace("/(auth)/login"); // Navigate to login
+      options?.onRedirect?.("/(auth)/login"); // Navigate to login via callback
     }
   }, []);
 
   /**
    * Change user password
+   * data: { password, newPassword }
+   * @params options - Callbacks for success, failure, and redirection
+   * @returns void
    */
   const changePassword = useCallback(
     async (payload: ChangePasswordPayload, options?: AuthActionOptions) => {
@@ -207,6 +223,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         signIn,
         signUp,
         signOut,

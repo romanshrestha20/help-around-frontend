@@ -7,6 +7,10 @@ export interface User {
     firstName: string;
     lastName: string;
     isAdmin: boolean;
+    bio?: string;
+    imageUrl?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 /**

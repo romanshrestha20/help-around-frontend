@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import { User } from './auth.types';
+import type { User } from './auth.types.js';
 
 async function saveAuth(token: string, user: User): Promise<void> {
     await SecureStore.setItemAsync('auth_token', token);
