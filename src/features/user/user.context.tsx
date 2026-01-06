@@ -1,4 +1,5 @@
 import {
+  useContext,
   createContext,
   useEffect,
   useState,
@@ -12,15 +13,15 @@ import {
   deleteUser as deleteUserApi,
   uploadProfileImage as uploadProfileImageApi,
   removeProfileImage as removeProfileImageApi,
-} from "./api/user.api.js";
+} from "@/src/features/user/api/user.api.js";
 
 import {
   User,
   UpdateUserPayload,
   UploadProfileImagePayload,
-} from "./user.types.js";
+} from "@/src/features/user/user.types.js";
 
-import { useAuth } from "../auth/hooks/use-auth.js";
+import { useAuth } from "@/src/features/auth/hooks/use-auth.js";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -273,4 +274,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </UserContext.Provider>
   );
+};
+
+export const useUser = (): UserContextType => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
 };
