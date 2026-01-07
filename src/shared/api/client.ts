@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { getToken } from "@/src/features/auth/auth.storage.js";
-import { ENV } from '@/src/shared/config/env.js';
+import { getToken } from "@/src/features/auth/auth.storage";
+import { ENV } from '@/src/shared/config/env';
 
 const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL, // Replace with your backend URL
