@@ -13,15 +13,15 @@ import {
   deleteUser as deleteUserApi,
   uploadProfileImage as uploadProfileImageApi,
   removeProfileImage as removeProfileImageApi,
-} from "@/src/features/user/api/user.api.js";
+} from "@/src/features/user/api/user.api";
 
 import {
   User,
   UpdateUserPayload,
   UploadProfileImagePayload,
-} from "@/src/features/user/user.types.js";
+} from "@/src/features/user/user.types";
 
-import { useAuth } from "@/src/features/auth/hooks/use-auth.js";
+import { useAuth } from "@/src/features/auth";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -274,12 +274,4 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </UserContext.Provider>
   );
-};
-
-export const useUser = (): UserContextType => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
 };

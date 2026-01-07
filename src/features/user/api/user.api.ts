@@ -1,5 +1,5 @@
-import apiClient from "@/src/shared/api/client.js";
-import type { User } from "../user.types.js"
+import apiClient from "@/src/shared/api/client";
+import type { User, UpdateUserPayload, UploadProfileImageResponse } from "../user.types";
 
 
 /**
@@ -55,14 +55,14 @@ export const deleteUser = async (userId: string): Promise<void> => {
  * Calls the backend upload profile image endpoint
  * @param userId - User ID
  * @param imageData - FormData containing the image file
- * @returns { user }
+ * @returns { imageUrl }
  */
 export const uploadProfileImage = async (
   userId: string,
   imageData: FormData
-): Promise<User> => {
+): Promise<UploadProfileImageResponse> => {
   try {
-    const response = await apiClient.post<{ user: User }>(
+    const response = await apiClient.post<UploadProfileImageResponse>(
       `/users/${userId}/upload`,
       imageData,
       {
@@ -70,7 +70,7 @@ export const uploadProfileImage = async (
       }
     );
 
-    return response.data.user;
+    return response.data;
   } catch (error: any) {
     const message =
       error.response?.data?.message || "Failed to upload profile image";
