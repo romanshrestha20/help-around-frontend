@@ -1,11 +1,11 @@
-import apiClient from "@/src/shared/api/client.js";
+import apiClient from "@/src/shared/api/client";
 import type {
     User,
     AuthResponse,
     ChangePasswordPayload,
     LoginPayload,
     RegisterPayload,
-} from "../auth.types.js";
+} from "../auth.types";
 
 
 /**
