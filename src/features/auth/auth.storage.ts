@@ -1,5 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
-import type { User } from './auth.types.js';
+import * as SecureStore from "expo-secure-store";
+
+import type { User } from './auth.types';
 
 async function saveAuth(token: string, user: User): Promise<void> {
     await SecureStore.setItemAsync('auth_token', token);
@@ -16,8 +17,8 @@ async function getUser(): Promise<User | null> {
 }
 
 async function clearAuth(): Promise<void> {
-    await SecureStore.deleteItemAsync('auth_token');
-    await SecureStore.deleteItemAsync('auth_user');
+    await SecureStore.removeItemAsync('auth_token');
+    await SecureStore.removeItemAsync('auth_user');
 }
 
 export { saveAuth, getToken, getUser, clearAuth };
