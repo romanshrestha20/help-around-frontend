@@ -1,6 +1,6 @@
-import { AuthProvider } from "@/src/features/auth/auth.context.js";
-import { UserProvider } from "@/src/features/user/user.context.js";
 import { ReactNode } from "react";
+import { AuthProvider } from "@/src/features/auth";
+import { UserProvider } from "@/src/features/user";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
