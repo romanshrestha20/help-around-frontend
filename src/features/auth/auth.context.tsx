@@ -6,20 +6,25 @@ import React, {
   useCallback,
 } from "react";
 
-import { saveAuth, getToken, clearAuth } from "@/src/features/auth/auth.storage.js";
+import {
+  saveAuth,
+  getToken,
+  clearAuth,
+} from "@/src/features/auth/auth.storage";
+
 import {
   login as loginApi,
   register as registerApi,
   logout as logoutApi,
   changePassword as changePasswordApi,
   getCurrentUser,
-} from "@/src/features/auth/api/auth.api.js";
+} from "@/src/features/auth/api";
 import {
   ChangePasswordPayload,
   LoginPayload,
   RegisterPayload,
   User,
-} from "@/src/features/auth/auth.types.js";
+} from "@/src/features/auth/auth.types";
 
 // Navigation is handled by consumers via callbacks
 
@@ -238,4 +243,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default AuthContext;
